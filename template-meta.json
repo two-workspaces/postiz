@@ -3,5 +3,6 @@
   "short_name": "Postiz Production",
   "description": "Schedule posts to 30+ social networks. Temporal, Postgres, Redis. v2.25.1",
   "category": "CMS",
-  "image": "https://raw.githubusercontent.com/two-workspaces/postiz/main/icon.svg"
+  "image": "https://raw.githubusercontent.com/two-workspaces/postiz/main/icon.svg",
+  "id": "a020a522-aacc-4d4f-8b98-8fde28c50535"
 }

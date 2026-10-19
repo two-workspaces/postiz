@@ -8,5 +8,13 @@ FROM ghcr.io/gitroomhq/postiz-app:v2.25.1
 RUN sed -i 's|^\(\s*\)server_name _;|&\n\1proxy_cookie_domain ~. $host;|' /etc/nginx/nginx.conf \
  && grep -q proxy_cookie_domain /etc/nginx/nginx.conf && nginx -t
 
+# Constants from upstream's docker-compose. Media lives on the /uploads volume and
+# nginx serves it from the same domain, so social networks can fetch it.
+ENV IS_GENERAL=true \
+    BACKEND_INTERNAL_URL=http://localhost:3000 \
+    STORAGE_PROVIDER=local \
+    UPLOAD_DIRECTORY=/uploads \
+    NEXT_PUBLIC_UPLOAD_DIRECTORY=/uploads
+
 # Railway's PORT (5000) belongs to nginx; the backend also reads PORT, so give it 3000.
 CMD ["sh", "-c", "nginx && PORT=3000 exec pnpm run pm2"]
