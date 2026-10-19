@@ -1,0 +1,7 @@
+{
+  "name": "Postiz | Social Media Scheduler with Temporal (No Elasticsearch)",
+  "short_name": "Postiz Production",
+  "description": "Schedule posts to 30+ social networks. Temporal, Postgres, Redis. v2.25.1",
+  "category": "CMS",
+  "image": "https://raw.githubusercontent.com/two-workspaces/postiz/main/icon.svg"
+}

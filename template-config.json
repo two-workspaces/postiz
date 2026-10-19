@@ -1,0 +1,221 @@
+{
+ "services": {
+  "52940487-c213-4e86-86b3-8bc63a6632bf": {
+   "icon": "https://raw.githubusercontent.com/two-workspaces/postiz/main/icon.svg",
+   "name": "Postiz",
+   "build": {},
+   "deploy": {
+    "startCommand": null,
+    "healthcheckPath": "/api/",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+   },
+   "source": {
+    "repo": "https://github.com/two-workspaces/postiz",
+    "rootDirectory": "/"
+   },
+   "networking": {
+    "serviceDomains": {
+     "<hasDomain>": {}
+    }
+   },
+   "volumeMounts": {
+    "f4d0ff65-399f-4025-8cbd-07312da2259c": {
+     "mountPath": "/uploads"
+    }
+   },
+   "variables": {
+    "PORT": {
+     "defaultValue": "5000",
+     "description": "Port nginx listens on inside the Postiz image - leave as is",
+     "isOptional": false
+    },
+    "MAIN_URL": {
+     "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+     "description": "Public URL of this Postiz - change to your custom domain after adding one",
+     "isOptional": false
+    },
+    "FRONTEND_URL": {
+     "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+     "description": "Same as MAIN_URL",
+     "isOptional": false
+    },
+    "NEXT_PUBLIC_BACKEND_URL": {
+     "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}/api",
+     "description": "MAIN_URL followed by /api",
+     "isOptional": false
+    },
+    "JWT_SECRET": {
+     "defaultValue": "${{secret(64, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Signs login sessions - auto-generated, keep it secret",
+     "isOptional": false
+    },
+    "DATABASE_URL": {
+     "defaultValue": "postgresql://${{Postgres.POSTGRES_USER}}:${{Postgres.POSTGRES_PASSWORD}}@${{Postgres.RAILWAY_PRIVATE_DOMAIN}}:5432/${{Postgres.POSTGRES_DB}}",
+     "description": "Postgres on the private network",
+     "isOptional": false
+    },
+    "REDIS_URL": {
+     "defaultValue": "redis://default:${{Redis.REDIS_PASSWORD}}@${{Redis.RAILWAY_PRIVATE_DOMAIN}}:6379?family=0",
+     "description": "Redis on the private network (family=0 lets ioredis use IPv6)",
+     "isOptional": false
+    },
+    "TEMPORAL_ADDRESS": {
+     "defaultValue": "${{Temporal.RAILWAY_PRIVATE_DOMAIN}}:7233",
+     "description": "Temporal frontend (gRPC) on the private network",
+     "isOptional": false
+    },
+    "DISABLE_REGISTRATION": {
+     "defaultValue": "true",
+     "description": "true = only the first sign-up is allowed (that account owns the workspace); invite teammates from Settings. Set to false to open public sign-up",
+     "isOptional": false
+    },
+    "OPENAI_API_KEY": {
+     "defaultValue": "",
+     "description": "Optional: enables the AI writer, image generation and agent features",
+     "isOptional": true
+    },
+    "RAILWAY_HEALTHCHECK_TIMEOUT_SEC": {
+     "defaultValue": "600",
+     "description": "First boot syncs the database schema and starts four processes",
+     "isOptional": false
+    }
+   }
+  },
+  "6d733be5-7665-4c27-bd24-d7e2ca2076bd": {
+   "icon": "https://raw.githubusercontent.com/two-workspaces/temporal/main/icon.svg",
+   "name": "Temporal",
+   "build": {},
+   "deploy": {
+    "startCommand": null,
+    "healthcheckPath": "/api/v1/system-info",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+   },
+   "source": {
+    "repo": "https://github.com/two-workspaces/temporal",
+    "rootDirectory": "/server"
+   },
+   "networking": {
+    "serviceDomains": {}
+   },
+   "volumeMounts": {},
+   "variables": {
+    "PORT": {
+     "defaultValue": "7243",
+     "description": "Frontend HTTP API port, used by Railway's health check - leave as is",
+     "isOptional": false
+    },
+    "POSTGRES_SEEDS": {
+     "defaultValue": "${{Postgres.RAILWAY_PRIVATE_DOMAIN}}",
+     "description": "Postgres host on the private network",
+     "isOptional": false
+    },
+    "DB_PORT": {
+     "defaultValue": "5432",
+     "description": "Postgres port",
+     "isOptional": false
+    },
+    "POSTGRES_USER": {
+     "defaultValue": "${{Postgres.POSTGRES_USER}}",
+     "description": "Postgres user (creates the temporal and temporal_visibility databases)",
+     "isOptional": false
+    },
+    "POSTGRES_PWD": {
+     "defaultValue": "${{Postgres.POSTGRES_PASSWORD}}",
+     "description": "Postgres password",
+     "isOptional": false
+    },
+    "NUM_HISTORY_SHARDS": {
+     "defaultValue": "4",
+     "description": "History shards. Fixed on first boot and can never change; 4 is plenty for a scheduler",
+     "isOptional": false
+    },
+    "DEFAULT_NAMESPACE": {
+     "defaultValue": "default",
+     "description": "Namespace Postiz uses (created on first boot)",
+     "isOptional": false
+    },
+    "RAILWAY_HEALTHCHECK_TIMEOUT_SEC": {
+     "defaultValue": "300",
+     "description": "Every deploy runs the schema migrations before the health check can pass",
+     "isOptional": false
+    }
+   }
+  },
+  "bb56af91-5d9c-49ef-9e69-ce544acc3f0b": {
+   "icon": "https://devicons.railway.app/i/redis.svg",
+   "name": "Redis",
+   "build": {},
+   "deploy": {
+    "startCommand": "/bin/sh -c \"exec docker-entrypoint.sh redis-server --requirepass $REDIS_PASSWORD\"",
+    "healthcheckPath": null,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+   },
+   "source": {
+    "image": "redis:8.10.2-alpine"
+   },
+   "networking": {
+    "serviceDomains": {}
+   },
+   "volumeMounts": {},
+   "variables": {
+    "REDIS_PASSWORD": {
+     "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Auto-generated Redis password",
+     "isOptional": false
+    }
+   }
+  },
+  "940da473-6cfb-40eb-a9f5-2df427c808d5": {
+   "icon": "https://devicons.railway.app/i/postgresql.svg",
+   "name": "Postgres",
+   "build": {},
+   "deploy": {
+    "startCommand": null,
+    "healthcheckPath": null,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+   },
+   "source": {
+    "image": "ghcr.io/railwayapp-templates/postgres-ssl:17"
+   },
+   "networking": {
+    "serviceDomains": {}
+   },
+   "volumeMounts": {
+    "1d2ae1c5-1960-44ea-9fe3-2ca3152906c2": {
+     "mountPath": "/var/lib/postgresql/data"
+    }
+   },
+   "variables": {
+    "POSTGRES_DB": {
+     "defaultValue": "postiz",
+     "description": "Database name (Temporal adds temporal and temporal_visibility next to it)",
+     "isOptional": false
+    },
+    "POSTGRES_USER": {
+     "defaultValue": "postiz",
+     "description": "Database user",
+     "isOptional": false
+    },
+    "POSTGRES_PASSWORD": {
+     "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Auto-generated database password",
+     "isOptional": false
+    },
+    "PGDATA": {
+     "defaultValue": "/var/lib/postgresql/data/pgdata",
+     "description": "Data subdirectory - keeps Postgres happy on Railway volumes",
+     "isOptional": false
+    },
+    "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+     "defaultValue": "60",
+     "description": "Time for Postgres to shut down cleanly on redeploy",
+     "isOptional": false
+    }
+   }
+  }
+ }
+}
