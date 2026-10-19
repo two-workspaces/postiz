@@ -49,7 +49,7 @@ For a custom domain, add it to the Postiz service and set `MAIN_URL`, `FRONTEND_
 
 ### Resources
 
-The Postiz image is large (1.7 GB compressed) and runs four Node processes. Plan on the **Hobby plan**: Free and Trial limits are too small.
+Measured idle on Railway: about 2 GB of RAM for the whole stack. Postiz uses about 1.6 GB (web app, API and worker), Postgres about 190 MB, Temporal about 190 MB and Redis about 12 MB. The Postiz image is also large (1.7 GB compressed). Plan on the **Hobby plan**: Free and Trial limits are too small.
 
 ## Why Deploy Postiz on Railway?
 
