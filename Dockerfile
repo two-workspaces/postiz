@@ -1,6 +1,6 @@
 # Official Postiz image (nginx :5000 in front of frontend :4200, backend :3000
 # and the Temporal worker), with two Railway fixes. Bump the tag to upgrade.
-FROM ghcr.io/gitroomhq/postiz-app:v2.25.3
+FROM ghcr.io/gitroomhq/postiz-app:v2.26.0
 
 # Postiz sets its auth cookie on the registrable domain of FRONTEND_URL. On a
 # *.up.railway.app address that is ".railway.app", so the session would be sent

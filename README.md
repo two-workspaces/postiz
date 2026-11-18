@@ -2,13 +2,13 @@
 
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/postiz-production?referralCode=sLjDXb&utm_medium=integration&utm_source=button&utm_campaign=postiz-production)
 
-[Postiz](https://postiz.com/) is an open-source social media scheduler. You write a post once, then schedule or publish it to X, LinkedIn, Instagram, Facebook, Threads, Bluesky, Mastodon, YouTube, TikTok, Pinterest, Reddit, Discord, Telegram and more than 20 other channels. It has a calendar, an AI writer, team workspaces, comments and approvals, analytics, a public API and an MCP server for AI agents. This template runs Postiz v2.25.3 with its own Temporal server on Postgres, so it needs no Elasticsearch.
+[Postiz](https://postiz.com/) is an open-source social media scheduler. You write a post once, then schedule or publish it to X, LinkedIn, Instagram, Facebook, Threads, Bluesky, Mastodon, YouTube, TikTok, Pinterest, Reddit, Discord, Telegram and more than 20 other channels. It has a calendar, an AI writer, team workspaces, comments and approvals, analytics, a public API and an MCP server for AI agents. This template runs Postiz v2.26.0 with its own Temporal server on Postgres, so it needs no Elasticsearch.
 
 ## About Hosting Postiz
 
 The stack has four services: Postiz, Temporal, Redis and Postgres.
 
-- **Postiz** is the official `ghcr.io/gitroomhq/postiz-app` image (pinned at v2.25.3). It runs the web app, the API and the Temporal worker that publishes your posts. Uploaded media is stored on a volume at `/uploads` and served from your own domain, so the social networks can fetch it.
+- **Postiz** is the official `ghcr.io/gitroomhq/postiz-app` image (pinned at v2.26.0). It runs the web app, the API and the Temporal worker that publishes your posts. Uploaded media is stored on a volume at `/uploads` and served from your own domain, so the social networks can fetch it.
 - **Temporal** schedules every post and retries failed publishes. It is the production `temporalio/server` image, not the deprecated `auto-setup` image. Schema migrations run on every deploy. It uses Postgres for advanced visibility, so the search attributes Postiz needs (`organizationId`, `postId`) work without Elasticsearch, which would add a JVM using 1 GB or more.
 - **Postgres** holds Postiz's data and Temporal's two databases. One Postgres serves both apps.
 - **Redis** is a cache only, with no volume.
